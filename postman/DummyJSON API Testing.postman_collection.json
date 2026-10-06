@@ -1,0 +1,371 @@
+{
+  "info": {
+    "_postman_id": "8f6af1c1-8157-47a7-8a5b-f0533329dad3",
+    "name": "DummyJSON API Testing",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "29719193"
+  },
+  "item": [
+    {
+      "name": "01-Users",
+      "item": [
+        {
+          "name": "TC-001 - Get Users",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\npm.test(\"Response is JSON\", function(){\r\n    pm.response.to.be.json;\r\n});\r\n\r\npm.test(\"Response contains users array\", function() {\r\n    const body = pm.response.json();\r\n    pm.expect(body.users).to.be.an(\"array\");\r\n});\r\n\r\npm.test(\"Exactly 5 users are returned\", function() {\r\n    const body = pm.response.json();\r\n    pm.expect(body.users.length).to.eql(5);\r\n});\r\n\r\npm.test(\"Pagination values are correct\", function() {\r\n    const body = pm.response.json();\r\n    \r\n    pm.expect(body.total).to.be.a(\"number\");\r\n    pm.expect(body.skip).to.eql(0);\r\n    pm.expect(body.limit).to.eql(5);\r\n});\r\n\r\npm.test(\"Each user contains required fields\", function() {\r\n    const body = pm.response.json();\r\n\r\n    body.users.forEach(function (user) {\r\n        pm.expect(user).to.have.property(\"id\");\r\n        pm.expect(user).to.have.property(\"firstName\");\r\n        pm.expect(user).to.have.property(\"lastName\");\r\n        pm.expect(user).to.have.property(\"email\");\r\n    });\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "https://dummyjson.com/users?limit=5",
+              "protocol": "https",
+              "host": [
+                "dummyjson",
+                "com"
+              ],
+              "path": [
+                "users"
+              ],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "5"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC-002 - Get Single User",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Response status is 200\", function(){\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\n\r\npm.test(\"Response is JSON\", function() {\r\n    pm.response.to.be.json;\r\n});\r\n\r\nconst body = pm.response.json();\r\n\r\npm.test(\"Correct user is returned\", function() {\r\n    pm.expect(body.id).to.eql(1);\r\n});\r\n\r\npm.test(\"User contains required fields\", function() {\r\n\r\n    pm.expect(body).to.have.property(\"id\");\r\n    pm.expect(body).to.have.property(\"firstName\");\r\n    pm.expect(body).to.have.property(\"lastName\");\r\n    pm.expect(body).to.have.property(\"email\");\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "https://dummyjson.com/users/1",
+              "protocol": "https",
+              "host": [
+                "dummyjson",
+                "com"
+              ],
+              "path": [
+                "users",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC-003 - Invalid User",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 404\", function () {\r\n    pm.response.to.have.status(404);\r\n});\r\n\r\npm.test(\"Response is JSON\", function () {\r\n    pm.response.to.be.json;\r\n});\r\n\r\npm.test(\"Error message exists\", function () {\r\n    const body = pm.response.json();\r\n    pm.expect(body).to.have.property(\"message\");\r\n});\r\n\r\npm.test(\"Correct error message is returned\", function () {\r\n    const body = pm.response.json();\r\n    pm.expect(body.message).to.eql(\"User with id '999999' not found\");\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "https://dummyjson.com/users/999999",
+              "protocol": "https",
+              "host": [
+                "dummyjson",
+                "com"
+              ],
+              "path": [
+                "users",
+                "999999"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC-004-Get Users with Pagination",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function() {\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\npm.test(\"Response is JSON\", function(){\r\n    pm.response.to.be.json;\r\n});\r\n\r\nconst body = pm.response.json();\r\n\r\npm.test(\"Exactly 5 users are returned\", function() {\r\n    pm.expect(body.users.length).to.equal(5);\r\n});\r\n\r\npm.test(\"Pagination values are correct\", function(){\r\n\r\n    pm.expect(body.skip).to.eql(10);\r\n    pm.expect(body.limit).to.eql(5);\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "https://dummyjson.com/users?limit=5&skip=10",
+              "protocol": "https",
+              "host": [
+                "dummyjson",
+                "com"
+              ],
+              "path": [
+                "users"
+              ],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "5"
+                },
+                {
+                  "key": "skip",
+                  "value": "10"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC-005-Search Users",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": ""
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC-006 -  Create User",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": ""
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC-007 - Update User",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": ""
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC-008 - Delete User",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": ""
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "02-Authentication",
+      "item": [
+        {
+          "name": "TC-009 - Login Success",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": ""
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC-010 - Get Current Authenticated User",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": ""
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC-011 - Login Failure",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": ""
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC-012 - Missing Password",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": ""
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC-013 - Access Protected Endpoint Without Token",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": ""
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC-014 - Access Protected Endpoint With Invalid Token",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": ""
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "03-Products",
+      "item": [
+        {
+          "name": "TC-015 - Get Products",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": ""
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC-016 - Get Single Product",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": ""
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC-017 - Invalid Product",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": ""
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC-018 - Search Products",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": ""
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC-019 - Search Products With No Results",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": ""
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC-020 - Create Product",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": ""
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC-021 - Update Product",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": ""
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC-022 - Delete Product",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": ""
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "accessToken",
+      "value": ""
+    },
+    {
+      "key": "refreshToken",
+      "value": ""
+    }
+  ]
+}
