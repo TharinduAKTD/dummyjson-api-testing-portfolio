@@ -1,0 +1,888 @@
+{
+  "info": {
+    "_postman_id": "8f6af1c1-8157-47a7-8a5b-f0533329dad3",
+    "name": "DummyJSON API Testing",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "29719193"
+  },
+  "item": [
+    {
+      "name": "01-Users",
+      "item": [
+        {
+          "name": "TC-001 - Get Users",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\npm.test(\"Response is JSON\", function(){\r\n    pm.response.to.be.json;\r\n});\r\n\r\npm.test(\"Response contains users array\", function() {\r\n    const body = pm.response.json();\r\n    pm.expect(body.users).to.be.an(\"array\");\r\n});\r\n\r\npm.test(\"Exactly 5 users are returned\", function() {\r\n    const body = pm.response.json();\r\n    pm.expect(body.users.length).to.eql(5);\r\n});\r\n\r\npm.test(\"Pagination values are correct\", function() {\r\n    const body = pm.response.json();\r\n    \r\n    pm.expect(body.total).to.be.a(\"number\");\r\n    pm.expect(body.skip).to.eql(0);\r\n    pm.expect(body.limit).to.eql(5);\r\n});\r\n\r\npm.test(\"Each user contains required fields\", function() {\r\n    const body = pm.response.json();\r\n\r\n    body.users.forEach(function (user) {\r\n        pm.expect(user).to.have.property(\"id\");\r\n        pm.expect(user).to.have.property(\"firstName\");\r\n        pm.expect(user).to.have.property(\"lastName\");\r\n        pm.expect(user).to.have.property(\"email\");\r\n    });\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "https://dummyjson.com/users?limit=5",
+              "protocol": "https",
+              "host": [
+                "dummyjson",
+                "com"
+              ],
+              "path": [
+                "users"
+              ],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "5"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC-002 - Get Single User",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Response status is 200\", function(){\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\n\r\npm.test(\"Response is JSON\", function() {\r\n    pm.response.to.be.json;\r\n});\r\n\r\nconst body = pm.response.json();\r\n\r\npm.test(\"Correct user is returned\", function() {\r\n    pm.expect(body.id).to.eql(1);\r\n});\r\n\r\npm.test(\"User contains required fields\", function() {\r\n\r\n    pm.expect(body).to.have.property(\"id\");\r\n    pm.expect(body).to.have.property(\"firstName\");\r\n    pm.expect(body).to.have.property(\"lastName\");\r\n    pm.expect(body).to.have.property(\"email\");\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "https://dummyjson.com/users/1",
+              "protocol": "https",
+              "host": [
+                "dummyjson",
+                "com"
+              ],
+              "path": [
+                "users",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC-003 - Invalid User",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 404\", function () {\r\n    pm.response.to.have.status(404);\r\n});\r\n\r\npm.test(\"Response is JSON\", function () {\r\n    pm.response.to.be.json;\r\n});\r\n\r\npm.test(\"Error message exists\", function () {\r\n    const body = pm.response.json();\r\n    pm.expect(body).to.have.property(\"message\");\r\n});\r\n\r\npm.test(\"Correct error message is returned\", function () {\r\n    const body = pm.response.json();\r\n    pm.expect(body.message).to.eql(\"User with id '999999' not found\");\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "https://dummyjson.com/users/999999",
+              "protocol": "https",
+              "host": [
+                "dummyjson",
+                "com"
+              ],
+              "path": [
+                "users",
+                "999999"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC-004-Get Users with Pagination",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function() {\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\npm.test(\"Response is JSON\", function(){\r\n    pm.response.to.be.json;\r\n});\r\n\r\nconst body = pm.response.json();\r\n\r\npm.test(\"Exactly 5 users are returned\", function() {\r\n    pm.expect(body.users.length).to.equal(5);\r\n});\r\n\r\npm.test(\"Pagination values are correct\", function(){\r\n\r\n    pm.expect(body.skip).to.eql(10);\r\n    pm.expect(body.limit).to.eql(5);\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "https://dummyjson.com/users?limit=5&skip=10",
+              "protocol": "https",
+              "host": [
+                "dummyjson",
+                "com"
+              ],
+              "path": [
+                "users"
+              ],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "5"
+                },
+                {
+                  "key": "skip",
+                  "value": "10"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC-005-Search Users",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\n    pm.response.to.have.status(200);\n});\n\npm.test(\"Response is JSON\", function () {\n    pm.response.to.be.json;\n});\n\nconst body = pm.response.json();\n\npm.test(\"Users array exists and is not empty\", function () {\n    pm.expect(body).to.have.property(\"users\");\n    pm.expect(body.users).to.be.an(\"array\");\n    pm.expect(body.users.length).to.be.above(0);\n});\n\npm.test(\"Returned users match search term John\", function () {\n\n    body.users.forEach(function (user) {\n\n        const fullName =\n            `${user.firstName} ${user.lastName} ${user.maidenName || \"\"}`\n            .toLowerCase();\n\n        pm.expect(fullName).to.include(\"john\");\n    });\n});\n\npm.test(\"Each user contains required fields\", function () {\n\n    body.users.forEach(function (user) {\n        pm.expect(user).to.have.property(\"id\");\n        pm.expect(user).to.have.property(\"firstName\");\n        pm.expect(user).to.have.property(\"lastName\");\n        pm.expect(user).to.have.property(\"email\");\n    });\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "https://dummyjson.com/users/search?q=John",
+              "protocol": "https",
+              "host": [
+                "dummyjson",
+                "com"
+              ],
+              "path": [
+                "users",
+                "search"
+              ],
+              "query": [
+                {
+                  "key": "q",
+                  "value": "John"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC-006 -  Create User",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 201\", function () {\n    pm.response.to.have.status(201);\n});\n\npm.test(\"Response is JSON\", function () {\n    pm.response.to.be.json;\n});\n\nconst responseBody = pm.response.json();\nconst requestBody = JSON.parse(pm.request.body.raw);\n\npm.test(\"Created user has an id\", function () {\n    pm.expect(responseBody).to.have.property(\"id\");\n});\n\npm.test(\"Created user data matches request\", function () {\n    pm.expect(responseBody.firstName).to.eql(requestBody.firstName);\n    if (requestBody.lastName !== undefined) {\n        pm.expect(responseBody.lastName).to.eql(requestBody.lastName);\n    }\n    pm.expect(responseBody.age).to.eql(requestBody.age);\n    if (requestBody.email !== undefined) {\n        pm.expect(responseBody.email).to.eql(requestBody.email);\n    }\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"firstName\": \"MichaelUpdated\",\r\n  \"age\": 30\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "https://dummyjson.com/users/add",
+              "protocol": "https",
+              "host": [
+                "dummyjson",
+                "com"
+              ],
+              "path": [
+                "users",
+                "add"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC-007 - Update User",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\npm.test(\"Response is JSON\", function () {\r\n    pm.response.to.be.json;\r\n});\r\n\r\nconst responseBody = pm.response.json();\r\nconst requestBody = JSON.parse(pm.request.body.raw);\r\n\r\npm.test(\"Correct user is updated\", function () {\r\n    pm.expect(responseBody.id).to.eql(2);\r\n});\r\n\r\npm.test(\"Updated values match request\", function () {\r\n    pm.expect(responseBody.firstName).to.eql(requestBody.firstName);\r\n    pm.expect(responseBody.age).to.eql(requestBody.age);\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"firstName\": \"MichaelUpdated\",\r\n  \"age\": 40\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "https://dummyjson.com/users/2",
+              "protocol": "https",
+              "host": [
+                "dummyjson",
+                "com"
+              ],
+              "path": [
+                "users",
+                "2"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC-008 - Delete User",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\npm.test(\"Response is JSON\", function () {\r\n    pm.response.to.be.json;\r\n});\r\n\r\nconst body = pm.response.json();\r\n\r\npm.test(\"Correct user is deleted\", function () {\r\n    pm.expect(body.id).to.eql(1);\r\n});\r\n\r\npm.test(\"User is marked as deleted\", function () {\r\n    pm.expect(body.isDeleted).to.eql(true);\r\n});\r\n\r\npm.test(\"Deleted timestamp exists\", function () {\r\n    pm.expect(body).to.have.property(\"deletedOn\");\r\n    pm.expect(body.deletedOn).to.be.a(\"string\");\r\n});\r\n\r\npm.test(\"Deleted timestamp is valid\", function () {\r\n    const deletedDate = new Date(body.deletedOn);\r\n\r\n    pm.expect(deletedDate.toString()).to.not.eql(\"Invalid Date\");\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "https://dummyjson.com/users/1",
+              "protocol": "https",
+              "host": [
+                "dummyjson",
+                "com"
+              ],
+              "path": [
+                "users",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "02-Authentication",
+      "item": [
+        {
+          "name": "TC-009 - Login Success",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\npm.test(\"Response is JSON\", function () {\r\n    pm.response.to.be.json;\r\n});\r\n\r\nconst body = pm.response.json();\r\n\r\npm.test(\"Correct user is logged in\", function () {\r\n    pm.expect(body.username).to.eql(\"emilys\");\r\n});\r\n\r\npm.test(\"Access token is returned\", function () {\r\n    pm.expect(body).to.have.property(\"accessToken\");\r\n    pm.expect(body.accessToken).to.be.a(\"string\");\r\n    pm.expect(body.accessToken.length).to.be.above(0);\r\n});\r\n\r\npm.test(\"Refresh token is returned\", function () {\r\n    pm.expect(body).to.have.property(\"refreshToken\");\r\n    pm.expect(body.refreshToken).to.be.a(\"string\");\r\n    pm.expect(body.refreshToken.length).to.be.above(0);\r\n});\r\n\r\npm.collectionVariables.set(\"accessToken\", body.accessToken);\r\npm.collectionVariables.set(\"refreshToken\", body.refreshToken);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"username\": \"emilys\",\r\n  \"password\": \"emilyspass\",\r\n  \"expiresInMins\": 30\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "https://dummyjson.com/auth/login",
+              "protocol": "https",
+              "host": [
+                "dummyjson",
+                "com"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC-010 - Get Current Authenticated User",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\npm.test(\"Response is JSON\", function () {\r\n    pm.response.to.be.json;\r\n});\r\n\r\nconst body = pm.response.json();\r\n\r\npm.test(\"Correct authenticated user is returned\", function () {\r\n    pm.expect(body.id).to.eql(1);\r\n    pm.expect(body.username).to.eql(\"emilys\");\r\n});\r\n\r\npm.test(\"Authenticated user contains required fields\", function () {\r\n    pm.expect(body).to.have.property(\"id\");\r\n    pm.expect(body).to.have.property(\"username\");\r\n    pm.expect(body).to.have.property(\"email\");\r\n    pm.expect(body).to.have.property(\"firstName\");\r\n    pm.expect(body).to.have.property(\"lastName\");\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "https://dummyjson.com/auth/me",
+              "protocol": "https",
+              "host": [
+                "dummyjson",
+                "com"
+              ],
+              "path": [
+                "auth",
+                "me"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC-011 - Login Failure",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () {\r\n    pm.response.to.have.status(400);\r\n});\r\n\r\npm.test(\"Response is JSON\", function () {\r\n    pm.response.to.be.json;\r\n});\r\n\r\nconst body = pm.response.json();\r\n\r\npm.test(\"Error message is returned\", function () {\r\n    pm.expect(body).to.have.property(\"message\");\r\n    pm.expect(body.message).to.be.a(\"string\");\r\n});\r\n\r\npm.test(\"Invalid credentials message is returned\", function () {\r\n    pm.expect(body.message).to.eql(\"Invalid credentials\");\r\n});\r\n\r\npm.test(\"Access token is not returned\", function () {\r\n    pm.expect(body).to.not.have.property(\"accessToken\");\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"username\": \"emilys\",\r\n  \"password\": \"wrongpassword\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "https://dummyjson.com/auth/login",
+              "protocol": "https",
+              "host": [
+                "dummyjson",
+                "com"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC-012 - Missing Password",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () {\r\n    pm.response.to.have.status(400);\r\n});\r\n\r\npm.test(\"Response is JSON\", function () {\r\n    pm.response.to.be.json;\r\n});\r\n\r\nconst body = pm.response.json();\r\n\r\npm.test(\"Validation error message is returned\", function () {\r\n    pm.expect(body).to.have.property(\"message\");\r\n    pm.expect(body.message).to.be.a(\"string\");\r\n});\r\n\r\npm.test(\"Required credentials message is returned\", function () {\r\n    pm.expect(body.message).to.eql(\"Username and password required\");\r\n});\r\n\r\npm.test(\"Access token is not returned\", function () {\r\n    pm.expect(body).to.not.have.property(\"accessToken\");\r\n});\r\n\r\npm.test(\"Refresh token is not returned\", function () {\r\n    pm.expect(body).to.not.have.property(\"refreshToken\");\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"username\": \"emilys\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "https://dummyjson.com/auth/login",
+              "protocol": "https",
+              "host": [
+                "dummyjson",
+                "com"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC-013 - Access Protected Endpoint Without Token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 401\", function () {\r\n    pm.response.to.have.status(401);\r\n});\r\n\r\npm.test(\"Response is JSON\", function () {\r\n    pm.response.to.be.json;\r\n});\r\n\r\nconst body = pm.response.json();\r\n\r\npm.test(\"Authentication error message is returned\", function () {\r\n    pm.expect(body).to.have.property(\"message\");\r\n    pm.expect(body.message).to.be.a(\"string\");\r\n});\r\n\r\npm.test(\"Access token required message is returned\", function () {\r\n    pm.expect(body.message).to.eql(\"Access Token is required\");\r\n});\r\n\r\npm.test(\"User data is not returned\", function () {\r\n    pm.expect(body).to.not.have.property(\"id\");\r\n    pm.expect(body).to.not.have.property(\"username\");\r\n    pm.expect(body).to.not.have.property(\"email\");\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "https://dummyjson.com/auth/me",
+              "protocol": "https",
+              "host": [
+                "dummyjson",
+                "com"
+              ],
+              "path": [
+                "auth",
+                "me"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC-014 - Access Protected Endpoint With Invalid Token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 401\", function () {\r\n    pm.response.to.have.status(401);\r\n});\r\n\r\npm.test(\"Response is JSON\", function () {\r\n    pm.response.to.be.json;\r\n});\r\n\r\nconst body = pm.response.json();\r\n\r\npm.test(\"Authentication error message is returned\", function () {\r\n    pm.expect(body).to.have.property(\"message\");\r\n    pm.expect(body.message).to.be.a(\"string\");\r\n});\r\n\r\npm.test(\"Invalid or expired token message is returned\", function () {\r\n    pm.expect(body.message).to.eql(\"Invalid/Expired Token!\");\r\n});\r\n\r\npm.test(\"Protected user data is not returned\", function () {\r\n    pm.expect(body).to.not.have.property(\"id\");\r\n    pm.expect(body).to.not.have.property(\"username\");\r\n    pm.expect(body).to.not.have.property(\"email\");\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "invalid-token-12345",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "https://dummyjson.com/auth/me",
+              "protocol": "https",
+              "host": [
+                "dummyjson",
+                "com"
+              ],
+              "path": [
+                "auth",
+                "me"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "03-Products",
+      "item": [
+        {
+          "name": "TC-015 - Get Products",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\npm.test(\"Response is JSON\", function () {\r\n    pm.response.to.be.json;\r\n});\r\n\r\nconst body = pm.response.json();\r\n\r\npm.test(\"Products array exists\", function () {\r\n    pm.expect(body).to.have.property(\"products\");\r\n    pm.expect(body.products).to.be.an(\"array\");\r\n});\r\n\r\npm.test(\"Exactly 5 products are returned\", function () {\r\n    pm.expect(body.products.length).to.eql(5);\r\n});\r\n\r\npm.test(\"Each product contains required fields\", function () {\r\n    body.products.forEach(function (product) {\r\n        pm.expect(product).to.have.property(\"id\");\r\n        pm.expect(product).to.have.property(\"title\");\r\n        pm.expect(product).to.have.property(\"category\");\r\n        pm.expect(product).to.have.property(\"price\");\r\n        pm.expect(product).to.have.property(\"stock\");\r\n    });\r\n});\r\n\r\npm.test(\"Pagination values are correct\", function () {\r\n    pm.expect(body.total).to.be.a(\"number\");\r\n    pm.expect(body.skip).to.eql(0);\r\n    pm.expect(body.limit).to.eql(5);\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "https://dummyjson.com/products?limit=5",
+              "protocol": "https",
+              "host": [
+                "dummyjson",
+                "com"
+              ],
+              "path": [
+                "products"
+              ],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "5"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC-016 - Get Single Product",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\npm.test(\"Response is JSON\", function () {\r\n    pm.response.to.be.json;\r\n});\r\n\r\nconst body = pm.response.json();\r\n\r\npm.test(\"Correct product is returned\", function () {\r\n    pm.expect(body.id).to.eql(1);\r\n});\r\n\r\npm.test(\"Product contains required fields\", function () {\r\n    pm.expect(body).to.have.property(\"id\");\r\n    pm.expect(body).to.have.property(\"title\");\r\n    pm.expect(body).to.have.property(\"category\");\r\n    pm.expect(body).to.have.property(\"price\");\r\n    pm.expect(body).to.have.property(\"stock\");\r\n    pm.expect(body).to.have.property(\"brand\");\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "https://dummyjson.com/products/1",
+              "protocol": "https",
+              "host": [
+                "dummyjson",
+                "com"
+              ],
+              "path": [
+                "products",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC-017 - Invalid Product",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 404\", function () {\r\n    pm.response.to.have.status(404);\r\n});\r\n\r\npm.test(\"Response is JSON\", function () {\r\n    pm.response.to.be.json;\r\n});\r\n\r\nconst body = pm.response.json();\r\n\r\npm.test(\"Error message is returned\", function () {\r\n    pm.expect(body).to.have.property(\"message\");\r\n    pm.expect(body.message).to.be.a(\"string\");\r\n});\r\n\r\npm.test(\"Correct product not found message is returned\", function () {\r\n    pm.expect(body.message).to.eql(\"Product with id '999999' not found\");\r\n});\r\n\r\npm.test(\"Product data is not returned\", function () {\r\n    pm.expect(body).to.not.have.property(\"id\");\r\n    pm.expect(body).to.not.have.property(\"title\");\r\n    pm.expect(body).to.not.have.property(\"price\");\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "https://dummyjson.com/products/999999",
+              "protocol": "https",
+              "host": [
+                "dummyjson",
+                "com"
+              ],
+              "path": [
+                "products",
+                "999999"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC-018 - Search Products",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\npm.test(\"Response is JSON\", function () {\r\n    pm.response.to.be.json;\r\n});\r\n\r\nconst body = pm.response.json();\r\n\r\npm.test(\"Products array exists\", function () {\r\n    pm.expect(body).to.have.property(\"products\");\r\n    pm.expect(body.products).to.be.an(\"array\");\r\n});\r\n\r\npm.test(\"Search returns results\", function () {\r\n    pm.expect(body.products.length).to.be.above(0);\r\n});\r\n\r\npm.test(\"Each product contains required fields\", function () {\r\n    body.products.forEach(function (product) {\r\n        pm.expect(product).to.have.property(\"id\");\r\n        pm.expect(product).to.have.property(\"title\");\r\n        pm.expect(product).to.have.property(\"category\");\r\n        pm.expect(product).to.have.property(\"price\");\r\n    });\r\n});\r\n\r\npm.test(\"Pagination values are valid\", function () {\r\n    pm.expect(body.total).to.be.a(\"number\");\r\n    pm.expect(body.skip).to.eql(0);\r\n    pm.expect(body.limit).to.eql(body.products.length);\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "https://dummyjson.com/products/search?q=phone",
+              "protocol": "https",
+              "host": [
+                "dummyjson",
+                "com"
+              ],
+              "path": [
+                "products",
+                "search"
+              ],
+              "query": [
+                {
+                  "key": "q",
+                  "value": "phone"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC-019 - Search Products With No Results",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\npm.test(\"Response is JSON\", function () {\r\n    pm.response.to.be.json;\r\n});\r\n\r\nconst body = pm.response.json();\r\n\r\npm.test(\"Products array exists\", function () {\r\n    pm.expect(body).to.have.property(\"products\");\r\n    pm.expect(body.products).to.be.an(\"array\");\r\n});\r\n\r\npm.test(\"No products are returned\", function () {\r\n    pm.expect(body.products.length).to.eql(0);\r\n});\r\n\r\npm.test(\"Search result total is zero\", function () {\r\n    pm.expect(body.total).to.eql(0);\r\n});\r\n\r\npm.test(\"Pagination values are zero\", function () {\r\n    pm.expect(body.skip).to.eql(0);\r\n    pm.expect(body.limit).to.eql(0);\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "https://dummyjson.com/products/search?q=zzzznotfound12345",
+              "protocol": "https",
+              "host": [
+                "dummyjson",
+                "com"
+              ],
+              "path": [
+                "products",
+                "search"
+              ],
+              "query": [
+                {
+                  "key": "q",
+                  "value": "zzzznotfound12345"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC-020 - Create Product",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 201\", function () {\r\n    pm.response.to.have.status(201);\r\n});\r\n\r\npm.test(\"Response is JSON\", function () {\r\n    pm.response.to.be.json;\r\n});\r\n\r\nconst responseBody = pm.response.json();\r\nconst requestBody = JSON.parse(pm.request.body.raw);\r\n\r\npm.test(\"Created product has an id\", function () {\r\n    pm.expect(responseBody).to.have.property(\"id\");\r\n});\r\n\r\npm.test(\"Created product data matches request\", function () {\r\n    pm.expect(responseBody.title).to.eql(requestBody.title);\r\n    pm.expect(responseBody.description).to.eql(requestBody.description);\r\n    pm.expect(responseBody.price).to.eql(requestBody.price);\r\n    pm.expect(responseBody.category).to.eql(requestBody.category);\r\n    pm.expect(responseBody.stock).to.eql(requestBody.stock);\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"title\": \"Wireless Mouse\",\r\n  \"description\": \"Ergonomic wireless mouse for office use\",\r\n  \"price\": 29.99,\r\n  \"category\": \"electronics\",\r\n  \"stock\": 50\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "https://dummyjson.com/products/add",
+              "protocol": "https",
+              "host": [
+                "dummyjson",
+                "com"
+              ],
+              "path": [
+                "products",
+                "add"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC-021 - Update Product",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\npm.test(\"Response is JSON\", function () {\r\n    pm.response.to.be.json;\r\n});\r\n\r\nconst responseBody = pm.response.json();\r\nconst requestBody = JSON.parse(pm.request.body.raw);\r\n\r\npm.test(\"Correct product is updated\", function () {\r\n    pm.expect(responseBody.id).to.eql(1);\r\n});\r\n\r\npm.test(\"Updated values match request\", function () {\r\n    pm.expect(responseBody.title).to.eql(requestBody.title);\r\n    pm.expect(responseBody.price).to.eql(requestBody.price);\r\n    pm.expect(responseBody.stock).to.eql(requestBody.stock);\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"title\": \"Updated Mascara\",\r\n  \"price\": 15.99,\r\n  \"stock\": 75\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "https://dummyjson.com/products/1",
+              "protocol": "https",
+              "host": [
+                "dummyjson",
+                "com"
+              ],
+              "path": [
+                "products",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC-022 - Delete Product",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\npm.test(\"Response is JSON\", function () {\r\n    pm.response.to.be.json;\r\n});\r\n\r\nconst body = pm.response.json();\r\n\r\npm.test(\"Correct product is deleted\", function () {\r\n    pm.expect(body.id).to.eql(1);\r\n});\r\n\r\npm.test(\"Product is marked as deleted\", function () {\r\n    pm.expect(body.isDeleted).to.eql(true);\r\n});\r\n\r\npm.test(\"Deleted timestamp exists\", function () {\r\n    pm.expect(body).to.have.property(\"deletedOn\");\r\n    pm.expect(body.deletedOn).to.be.a(\"string\");\r\n});\r\n\r\npm.test(\"Deleted timestamp is valid\", function () {\r\n    const deletedDate = new Date(body.deletedOn);\r\n    pm.expect(deletedDate.toString()).to.not.eql(\"Invalid Date\");\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "https://dummyjson.com/products/1",
+              "protocol": "https",
+              "host": [
+                "dummyjson",
+                "com"
+              ],
+              "path": [
+                "products",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "accessToken",
+      "value": ""
+    },
+    {
+      "key": "refreshToken",
+      "value": ""
+    }
+  ]
+}
