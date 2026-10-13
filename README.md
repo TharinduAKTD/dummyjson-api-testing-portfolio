@@ -85,15 +85,32 @@ Postman test scripts were created using JavaScript assertions to validate:
 - Bug Report Template
 - Screenshots / Test Evidence
 
+
 ## Project Structure
 
-DummyJSON-API-Testing/
+dummyjson-api-testing-portfolio/
+├── README.md
 ├── postman/
-│   └── DummyJSON_API_Testing.postman_collection.json
+│   └── DummyJSON API Testing.postman_collection.json
 ├── reports/
 │   └── DummyJSON_API_Test_Cases.xlsx
-├── screenshots/
-└── README.md
+└── screenshots/
+    ├── 01-get-users-tests-pass.png
+    ├── 02-create-user.png
+    ├── 03-login-success-test-results.png
+    ├── 04-login-failure.png
+    ├── 05-protected-no-token.png
+    ├── 06-invalid-token.png
+    ├── 07-create-product.png
+    └── 08-delete-product.png
+
+## How to Run
+
+1. Download or clone this repository.
+2. Open Postman and import the collection from the `postman` folder.
+3. Select a request and click Send.
+4. Open Test Results to review automated assertions.
+5. Run TC-009 Login Success before authenticated requests to generate a demo access token.
 
 ## Notes
 DummyJSON is a public test API. Create, update, and delete operations are simulated and do not permanently modify the database.
